@@ -1,4 +1,4 @@
-package sistemaViajes;
+package tads;
 
 /**
  * Nodo generico para lista doblemente encadenada.

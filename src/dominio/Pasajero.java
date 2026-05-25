@@ -1,4 +1,4 @@
-package sistemaViajes;
+package dominio;
 
 /**
  * Representa un pasajero del sistema.

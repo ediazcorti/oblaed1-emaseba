@@ -1,4 +1,6 @@
-package sistemaViajes;
+package dominio;
+
+import tads.Cola;
 
 /**
  * Representa un aeropuerto del sistema.

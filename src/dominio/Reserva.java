@@ -1,4 +1,4 @@
-package sistemaViajes;
+package dominio;
 
 /**
  * Representa una reserva de un pasajero en un vuelo.

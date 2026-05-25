@@ -3,7 +3,7 @@ package sistemaViajes;
 public class Retorno {
 
     public enum Resultado {
-        OK, ERROR_1, ERROR_2, ERROR_3, ERROR_4, ERROR_5, NO_IMPLEMENTADA
+        OK, ERROR_1, ERROR_2, ERROR_3, ERROR_4, ERROR_5, ERROR_6, ERROR_7, ERROR_8, NO_IMPLEMENTADA
     };
     private int valorEntero;
     private String valorString;
@@ -31,7 +31,7 @@ public class Retorno {
         this.valorbooleano = valorbooleano;
         this.resultado = resultado;
     }
-    
+
     public int getValorEntero() {
         return valorEntero;
     }
@@ -59,7 +59,7 @@ public class Retorno {
     public static Retorno ok(String valorString) {
         return new Retorno(Resultado.OK, valorString);
     }
-    
+
     public static Retorno ok(int valorInt) {
         return new Retorno(Resultado.OK, "", valorInt);
     }
@@ -82,6 +82,18 @@ public class Retorno {
 
     public static Retorno error5() {
         return new Retorno(Resultado.ERROR_5);
+    }
+
+    public static Retorno error6() {
+        return new Retorno(Resultado.ERROR_6);
+    }
+
+    public static Retorno error7() {
+        return new Retorno(Resultado.ERROR_7);
+    }
+
+    public static Retorno error8() {
+        return new Retorno(Resultado.ERROR_8);
     }
 
 }

@@ -1,4 +1,6 @@
-package sistemaViajes;
+package tads;
+
+import tads.NodoSimple;
 
 /**
  * Cola generica FIFO (First In, First Out).

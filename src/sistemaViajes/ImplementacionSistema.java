@@ -1,6 +1,18 @@
+// Emanuel Diaz 275164 - Sebastián Hohl 327007 
 package sistemaViajes;
 
 // Agregar aquí nombres y números de estudiante de los integrantes del equipo
+
+import dominio.Clase;
+import dominio.Categoria;
+import dominio.Estado;
+import dominio.Aeropuerto;
+import dominio.Reserva;
+import dominio.Pasajero;
+import dominio.Vuelo;
+import tads.ListaSimple;
+import tads.ListaDoble;
+
 public class ImplementacionSistema implements Sistema {
 
     private ListaDoble<Pasajero> pasajeros;
@@ -13,16 +25,17 @@ public class ImplementacionSistema implements Sistema {
     // ----------------------------------------------------------------
 
     private boolean esVacioONull(String s) {
-        return s == null || s.isEmpty();
+        return s == null || s.trim().isEmpty();
     }
 
     private boolean esFormatoCedulaValido(String cedula) {
-        return cedula.matches("\\d?\\.?\\d{3}\\.\\d{3}-\\d");
+        return cedula.matches("([1-9]\\.\\d{3}|\\d{3})\\.\\d{3}-\\d");
     }
 
     // ================================================================
     // Op 01 - Inicializar Sistema
     // ================================================================
+
 
     @SuppressWarnings("unchecked")
     @Override
@@ -44,17 +57,23 @@ public class ImplementacionSistema implements Sistema {
     @Override
     public Retorno registrarPasajero(String cedula, String nombre, int edad, Categoria categoria) {
         // ERROR_1: algún parámetro vacío, null, edad negativa o categoria null
-        if (esVacioONull(cedula) || esVacioONull(nombre) || edad < 0 || categoria == null) {
+        if (esVacioONull(cedula) || esVacioONull(nombre) || categoria == null) {
             return Retorno.error1();
         }
         // ERROR_2: formato de cédula inválido
         if (!esFormatoCedulaValido(cedula)) {
             return Retorno.error2();
         }
-        // ERROR_3: ya existe un pasajero con esa cédula
+        
+        // ERROR_3: Si la edad es menor a 0
+        if (edad < 0 ) {
+            return Retorno.error3();
+        }
+        
+        // ERROR_4: ya existe un pasajero con esa cédula
         Pasajero pasajeroAux = new Pasajero(cedula, null, 0, null);
         if (pasajeros.buscar(pasajeroAux) != null) {
-            return Retorno.error3();
+            return Retorno.error4();
         }
         // Registrar: insertar ordenado en lista principal y en la lista de su categoría
         Pasajero nuevo = new Pasajero(cedula, nombre, edad, categoria);
@@ -108,9 +127,14 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno listarPasajerosPorCategoría(Categoria unaCategoria) {
+        /* 
+        // EL OBLIGATORIO DICE QUE ESTA OP 6 NO RETORNA ERRORES, PERO SI TUVIERA QUE RETORNAR ERRORES,
+        // TENDRIA QUE TENER ESTA VALIDACION - TODO - REVISAR CON PROFE
+        
+        
         if (unaCategoria == null) {
             return Retorno.error1();
-        }
+        } */
         // Acceso directo a la lista de esa categoría — O(k)
         return Retorno.ok(porCategoria[unaCategoria.getIndice()].listar());
     }
@@ -165,27 +189,32 @@ public class ImplementacionSistema implements Sistema {
     @Override
     public Retorno registrarVuelo(String codigoAeropuertoOrigen, String codigoAeropuertoDestino,
             String codigoDeVuelo, int capacidad, int costoEnDolares) {
-        // ERROR_1: parámetros vacíos, null, capacidad o costo inválidos
-        if (esVacioONull(codigoAeropuertoOrigen) || esVacioONull(codigoAeropuertoDestino)
-                || esVacioONull(codigoDeVuelo) || capacidad <= 0 || costoEnDolares <= 0) {
+        // ERROR_1: INTS recibidos vacios o null
+        if (capacidad <= 0 || costoEnDolares <= 0) {
             return Retorno.error1();
         }
-        // ERROR_2: aeropuerto origen no existe
+        // ERROR_2: Strings recibidos vacios o nulls
+        if (esVacioONull(codigoAeropuertoOrigen) || esVacioONull(codigoAeropuertoDestino)
+                || esVacioONull(codigoDeVuelo)) {
+            return Retorno.error2();
+        }
+        
+        // ERROR_3: aeropuerto origen no existe
         Aeropuerto aeropuertoAux = new Aeropuerto(codigoAeropuertoOrigen, null);
         Aeropuerto origen = aeropuertos.buscar(aeropuertoAux);
         if (origen == null) {
-            return Retorno.error2();
+            return Retorno.error3();
         }
-        // ERROR_3: aeropuerto destino no existe
+        // ERROR_4: aeropuerto destino no existe
         aeropuertoAux = new Aeropuerto(codigoAeropuertoDestino, null);
         Aeropuerto destino = aeropuertos.buscar(aeropuertoAux);
         if (destino == null) {
-            return Retorno.error3();
+            return Retorno.error4();
         }
-        // ERROR_4: ya existe un vuelo con ese código
+        // ERROR_5: ya existe un vuelo con ese código
         Vuelo vueloAux = new Vuelo(codigoDeVuelo, null, null, 0, 0);
         if (vuelos.buscar(vueloAux) != null) {
-            return Retorno.error4();
+            return Retorno.error5();
         }
         vuelos.agregarInicio(new Vuelo(codigoDeVuelo, origen, destino, capacidad, costoEnDolares));
         return Retorno.ok();
@@ -274,30 +303,41 @@ public class ImplementacionSistema implements Sistema {
         if (esVacioONull(codigoDeVuelo) || esVacioONull(cedula)) {
             return Retorno.error1();
         }
-        // ERROR_2: vuelo no existe
+        
+        // ERROR_2: La cedula no tiene el formato Correcto
+        if(!esFormatoCedulaValido(cedula)){
+            return Retorno.error2();
+        }       
+        
+        // ERROR_3: vuelo no existe
         Vuelo vueloAux = new Vuelo(codigoDeVuelo, null, null, 0, 0);
         Vuelo vuelo = vuelos.buscar(vueloAux);
         if (vuelo == null) {
-            return Retorno.error2();
-        }
-        // ERROR_3: vuelo no está en estado PROGRAMADO o ABIERTO
-        if (vuelo.getEstado() != Estado.PROGRAMADO && vuelo.getEstado() != Estado.ABIERTO) {
             return Retorno.error3();
         }
+        
+        // ERROR_5: vuelo no está en estado PROGRAMADO o ABIERTO
+        // Ejecutamos esto primero para que el sistema no busque un pasajero innecesariamente 
+        // antes de saber el estado del vuelo
+        if (vuelo.getEstado() != Estado.PROGRAMADO && vuelo.getEstado() != Estado.ABIERTO) {
+            return Retorno.error5();
+        }  
+       
         // ERROR_4: pasajero no existe en el sistema
         Pasajero pasajeroAux = new Pasajero(cedula, null, 0, null);
         Pasajero pasajero = pasajeros.buscar(pasajeroAux);
         if (pasajero == null) {
             return Retorno.error4();
         }
-        // ERROR_5: el pasajero ya tiene una reserva en ese vuelo
+      
+        // ERROR_6: el pasajero ya tiene una reserva en ese vuelo
         Reserva reservaAux = new Reserva(pasajeroAux);
         if (vuelo.buscarReserva(reservaAux) != null) {
-            return Retorno.error5();
+            return Retorno.error6();
         }
-        // ERROR_5: vuelo lleno (capacidad con overbooking del 10%)
+        // ERROR_7: vuelo lleno (capacidad con overbooking del 10%)
         if (vuelo.getCantidadReservas() >= vuelo.getLimiteReservas()) {
-            return Retorno.error5();
+            return Retorno.error7();
         }
         vuelo.agregarReserva(new Reserva(pasajero));
         return Retorno.ok();
@@ -313,35 +353,46 @@ public class ImplementacionSistema implements Sistema {
         if (esVacioONull(codigoDeVuelo) || esVacioONull(cedula)) {
             return Retorno.error1();
         }
-        // ERROR_2: vuelo no existe
+        
+        // ERROR_2: La cedula no tiene el formato Correcto
+        if(!esFormatoCedulaValido(cedula)){
+            return Retorno.error2();
+        }
+        
+        // ERROR_3: vuelo no existe
         Vuelo vueloAux = new Vuelo(codigoDeVuelo, null, null, 0, 0);
         Vuelo vuelo = vuelos.buscar(vueloAux);
         if (vuelo == null) {
-            return Retorno.error2();
-        }
-        // ERROR_3: el vuelo no está en estado ABIERTO
-        if (vuelo.getEstado() != Estado.ABIERTO) {
             return Retorno.error3();
         }
+        
+        // ERROR_5: el vuelo no está en estado ABIERTO
+        // Ejecutamos esto primero para que el sistema no busque un pasajero innecesariamente 
+        // antes de saber el estado del vuelo
+        if (vuelo.getEstado() != Estado.ABIERTO) {
+            return Retorno.error5();
+        }
+        
         // ERROR_4: pasajero no existe en el sistema
         Pasajero pasajeroAux = new Pasajero(cedula, null, 0, null);
         Pasajero pasajero = pasajeros.buscar(pasajeroAux);
         if (pasajero == null) {
             return Retorno.error4();
         }
-        // ERROR_5: el pasajero no tiene reserva en ese vuelo
+          
+        // ERROR_6: el pasajero no tiene reserva en ese vuelo
         Reserva reservaAux = new Reserva(pasajeroAux);
         Reserva reserva = vuelo.buscarReserva(reservaAux);
         if (reserva == null) {
-            return Retorno.error5();
+            return Retorno.error6();
         }
-        // ERROR_5: el pasajero ya realizó el check-in
+        // ERROR_7: el pasajero ya realizó el check-in
         if (reserva.isConfirmada()) {
-            return Retorno.error5();
+            return Retorno.error7();
         }
-        // ERROR_5: vuelo lleno (capacidad exacta, sin overbooking para check-in)
+        // ERROR_8: vuelo lleno (capacidad exacta, sin overbooking para check-in)
         if (vuelo.getCantidadConfirmados() >= vuelo.getCapacidad()) {
-            return Retorno.error5();
+            return Retorno.error8();
         }
         vuelo.confirmarReserva(reserva);
         return Retorno.ok();
@@ -357,13 +408,13 @@ public class ImplementacionSistema implements Sistema {
         if (esVacioONull(codigoAeropuerto)) {
             return Retorno.error1();
         }
-        // ERROR_2: aeropuerto no existe
+        // ERROR_2: aeropuerto no existe con ese codigo
         Aeropuerto aeropuertoAux = new Aeropuerto(codigoAeropuerto, null);
         Aeropuerto aeropuerto = aeropuertos.buscar(aeropuertoAux);
         if (aeropuerto == null) {
             return Retorno.error2();
         }
-        // ERROR_3: no hay vuelos esperando en la cola
+        // ERROR_3: Si no hay ningún vuelo esperando embarque y despegue en ese aeropuerto
         if (aeropuerto.colaEstaVacia()) {
             return Retorno.error3();
         }
@@ -383,6 +434,9 @@ public class ImplementacionSistema implements Sistema {
     @Override
     public Retorno consultaDisponibilidad(int[][] matriz, int cantidad, Clase unaClase) {
         // ERROR_1: parámetros inválidos
+        // TODO - REVISAR CON PROFE: EL ERROR ORIGINAL SOLO DICE: "Si la cantidad es menor o igual a 0."
+        // esta bien esto que hicimos de chequear que la matriz y la clase no sean null? o deberiamos quitarlo?
+        // en temas de olgica suena mejor chequear esos otros dos valores tambien 
         if (matriz == null || cantidad <= 0 || unaClase == null) {
             return Retorno.error1();
         }

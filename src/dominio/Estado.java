@@ -1,4 +1,4 @@
-package sistemaViajes;
+package dominio;
 
 import java.util.Arrays;
 import java.util.Objects;

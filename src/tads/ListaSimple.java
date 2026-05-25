@@ -1,4 +1,6 @@
-package sistemaViajes;
+package tads;
+
+import tads.NodoSimple;
 
 /**
  * Lista simplemente encadenada generica.
