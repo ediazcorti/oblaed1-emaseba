@@ -127,14 +127,11 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno listarPasajerosPorCategoría(Categoria unaCategoria) {
-        /* 
-        // EL OBLIGATORIO DICE QUE ESTA OP 6 NO RETORNA ERRORES, PERO SI TUVIERA QUE RETORNAR ERRORES,
-        // TENDRIA QUE TENER ESTA VALIDACION - TODO - REVISAR CON PROFE
-        
-        
+    // Si unaCategoria es null retornamos error (Esto no viene en los requerimientos 
+    // pero el profe nos dijo por teams que lo podiamos agregar si queremos)    
         if (unaCategoria == null) {
-            return Retorno.error1();
-        } */
+        return Retorno.error1();
+    }
         // Acceso directo a la lista de esa categoría — O(k)
         return Retorno.ok(porCategoria[unaCategoria.getIndice()].listar());
     }
