@@ -148,7 +148,7 @@ public class ImplementacionSistema implements Sistema {
         }
         // ERROR_2: ya existe un aeropuerto con ese código
         // Nota: la verificación es O(n) aunque el insert sea O(1).
-        // El profe reconoció la contradicción y va a actualizar la letra.
+        // El profe reconoció la contradicción y hablamos de la letra en la clase, especificando que esto estaba bien.
         Aeropuerto aeropuertoAux = new Aeropuerto(codigo, null);
         if (aeropuertos.buscar(aeropuertoAux) != null) {
             return Retorno.error2();
@@ -431,9 +431,12 @@ public class ImplementacionSistema implements Sistema {
     @Override
     public Retorno consultaDisponibilidad(int[][] matriz, int cantidad, Clase unaClase) {
         // ERROR_1: parámetros inválidos
-        // TODO - REVISAR CON PROFE: EL ERROR ORIGINAL SOLO DICE: "Si la cantidad es menor o igual a 0."
-        // esta bien esto que hicimos de chequear que la matriz y la clase no sean null? o deberiamos quitarlo?
-        // en temas de olgica suena mejor chequear esos otros dos valores tambien 
+        // REVISAMOS CON EL PROFE LO SIGUIETNE: EL ERROR ORIGINAL SOLO DICE: "Si la cantidad es menor o igual a 0."
+        // Le hemos consultado si: "esta bien esto que hicimos de chequear que la matriz y la clase no sean null? o deberiamos quitarlo?"
+        // en temas de olgica suena mejor chequear esos otros dos valores tambien.
+        
+        // El profe dijo que agergar tambien el chequeo de que la matriz no sea null, no suma ni resta, pero que podiamos hacerlo asique lo dejamos :) 
+        
         if (matriz == null || cantidad <= 0 || unaClase == null) {
             return Retorno.error1();
         }
