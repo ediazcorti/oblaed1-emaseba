@@ -431,26 +431,26 @@ public class ImplementacionSistema implements Sistema {
         // Escaneamos de izquierda a derecha; en cuanto encontramos una columna sin N, la zona
         // PRIMERA terminó ahí.
         int primeraEnd = 0;
-        int colScan = 0;
+        int columnaIndice = 0;
         boolean sigueN = true;
 
-        while (colScan < columnas && sigueN) {
+        while (columnaIndice < columnas && sigueN) {
             boolean hayNenEstaCol = false;
-            int filScan = 0;
+            int filaIndice = 0;
 
-            while (filScan < filas && !hayNenEstaCol) {
-                if (matriz[filScan][colScan] == NO_APLICA) {
+            while (filaIndice < filas && !hayNenEstaCol) {
+                if (matriz[filaIndice][columnaIndice] == NO_APLICA) {
                     hayNenEstaCol = true;
                 }
-                filScan++;
+                filaIndice++;
             }
 
             if (hayNenEstaCol) {
-                primeraEnd = colScan + 1; // esta columna pertenece a PRIMERA
+                primeraEnd = columnaIndice + 1; // esta columna pertenece a PRIMERA
             } else {
                 sigueN = false;           // columna sin N → terminó zona PRIMERA
             }
-            colScan++;
+            columnaIndice++;
         }
 
         // Zona EJECUTIVA = las 4 columnas inmediatas tras PRIMERA (fijo para este avión)
