@@ -1,13 +1,14 @@
-package sistemaViajes;
-
-
-
+package testcomplementariosdelprofe;
+import sistemaViajes.Retorno;
+import sistemaViajes.Sistema;
+import sistemaViajes.ImplementacionSistema;
 import dominio.Categoria;
+
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class Test02_RegistrarPasajero {
+public class COMPLEMENTARIO_Test02_RegistrarPasajero {
 
     private Retorno retorno;
     private final Sistema s = new ImplementacionSistema();

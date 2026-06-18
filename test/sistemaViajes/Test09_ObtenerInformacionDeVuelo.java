@@ -22,7 +22,7 @@ public class Test09_ObtenerInformacionDeVuelo {
         retorno = s.obtenerInformacionDeVuelo("V001");
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
         // Formato: origen;destino;codigo;capacidad;costo;estado;reservas;confirmados
-        assertEquals("MVD;GRU;V001;100;500;Programado;0;0", retorno.getValorString());
+        assertEquals("MVD:GRU;V001;100;500;Programado;0;0", retorno.getValorString());
     }
 
     @Test
@@ -48,6 +48,6 @@ public class Test09_ObtenerInformacionDeVuelo {
         s.abrirVuelo("V001");
         retorno = s.obtenerInformacionDeVuelo("V001");
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals("MVD;GRU;V001;100;500;Abierto;0;0", retorno.getValorString());
+        assertEquals("MVD:GRU;V001;100;500;Abierto;0;0", retorno.getValorString());
     }
 }

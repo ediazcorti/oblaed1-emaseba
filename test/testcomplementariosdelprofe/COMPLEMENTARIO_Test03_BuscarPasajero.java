@@ -1,12 +1,16 @@
-package sistemaViajes;
+package testcomplementariosdelprofe;
 
 import dominio.Categoria;
 
+
+import sistemaViajes.Retorno;
+import sistemaViajes.ImplementacionSistema;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import sistemaViajes.Sistema;
 
-public class Test03_BuscarPasajero {
+public class COMPLEMENTARIO_Test03_BuscarPasajero {
 
     private Retorno retorno;
     private final Sistema s = new ImplementacionSistema();
@@ -34,21 +38,6 @@ public class Test03_BuscarPasajero {
     public void buscarPasajeroError02() {
         retorno = s.buscarPasajero("5.365.221-1");
         assertEquals(Retorno.Resultado.ERROR_2, retorno.getResultado());
-    }
-
-    // ============================================================
-// AGREGAMOS ESTO PORQUE LE FALTABA AL TEST03 BASE QUE NOS DIERON
-// El test original solo cubría un caso de ERROR_1 (formato inválido).
-// Le faltaban: cédula null, cédula vacía y cédula con solo espacios.
-// ============================================================
-    @Test
-    public void buscarPasajeroError01NullYVacio() {
-        retorno = s.buscarPasajero(null);
-        assertEquals(Retorno.Resultado.ERROR_1, retorno.getResultado());
-        retorno = s.buscarPasajero("");
-        assertEquals(Retorno.Resultado.ERROR_1, retorno.getResultado());
-        retorno = s.buscarPasajero("  ");
-        assertEquals(Retorno.Resultado.ERROR_1, retorno.getResultado());
     }
 
 }

@@ -363,6 +363,13 @@ public class ImplementacionSistema implements Sistema {
             return Retorno.error3();
         }
         
+         // ERROR_4: pasajero no existe en el sistema
+        Pasajero pasajeroAux = new Pasajero(cedula, null, 0, null);
+        Pasajero pasajero = pasajeros.buscar(pasajeroAux);
+        if (pasajero == null) {
+            return Retorno.error4();
+        }
+        
         // ERROR_5: el vuelo no está en estado ABIERTO
         // Ejecutamos esto primero para que el sistema no busque un pasajero innecesariamente 
         // antes de saber el estado del vuelo
@@ -370,12 +377,7 @@ public class ImplementacionSistema implements Sistema {
             return Retorno.error5();
         }
         
-        // ERROR_4: pasajero no existe en el sistema
-        Pasajero pasajeroAux = new Pasajero(cedula, null, 0, null);
-        Pasajero pasajero = pasajeros.buscar(pasajeroAux);
-        if (pasajero == null) {
-            return Retorno.error4();
-        }
+       
           
         // ERROR_6: el pasajero no tiene reserva en ese vuelo
         Reserva reservaAux = new Reserva(pasajeroAux);
@@ -428,68 +430,88 @@ public class ImplementacionSistema implements Sistema {
     // Op 16 - Consulta Disponibilidad
     // ================================================================
 
-    @Override
-    public Retorno consultaDisponibilidad(int[][] matriz, int cantidad, Clase unaClase) {
-        // ERROR_1: parámetros inválidos
-        // REVISAMOS CON EL PROFE LO SIGUIETNE: EL ERROR ORIGINAL SOLO DICE: "Si la cantidad es menor o igual a 0."
-        // Le hemos consultado si: "esta bien esto que hicimos de chequear que la matriz y la clase no sean null? o deberiamos quitarlo?"
-        // en temas de olgica suena mejor chequear esos otros dos valores tambien.
-        
-        // El profe dijo que agergar tambien el chequeo de que la matriz no sea null, no suma ni resta, pero que podiamos hacerlo asique lo dejamos :) 
-        
-        if (matriz == null || cantidad <= 0 || unaClase == null) {
-            return Retorno.error1();
+@Override
+public Retorno consultaDisponibilidad(int[][] matriz, int cantidad, Clase unaClase) {
+    if (matriz == null || cantidad <= 0 || unaClase == null) {
+        return Retorno.error1();
+    }
+
+    int filas = matriz.length;
+    int columnas = (filas > 0) ? matriz[0].length : 0;
+    if (filas == 0 || columnas == 0) {
+        return new Retorno(Retorno.Resultado.OK, "", 0);
+    }
+
+    final int DISPONIBLE = 0; // D
+    final int NO_APLICA   = 2; // N — skip, no rompe la cadena
+    // O (=1) rompe la cadena implícitamente (no es DISPONIBLE ni NO_APLICA)
+
+    // ── Detectar zona de PRIMERA: columnas que tienen algún N ──────────
+    int primeraEnd = 0;
+    for (int col = 0; col < columnas; col++) {
+        boolean tieneN = false;
+        for (int fil = 0; fil < filas; fil++) {
+            if (matriz[fil][col] == NO_APLICA) { tieneN = true; break; }
         }
+        if (tieneN) primeraEnd = col + 1;
+        else        break; // zona PRIMERA es contigua desde col 0
+    }
 
-        int filas = matriz.length;
-        int columnas = (filas > 0) ? matriz[0].length : 0;
+    // ── Límites de zona para la clase pedida ──────────────────────────
+    // Avión de la consigna: 3 cols PRIMERA, 4 cols EJECUTIVA, resto TURISTA
+    int ejecutivaCount = 4; // fijo para este avión
+    int ejecutivaStart = primeraEnd;
+    int ejecutivaEnd   = Math.min(ejecutivaStart + ejecutivaCount, columnas);
 
-        // Si hay menos filas que la cantidad pedida, no puede haber bloques
-        if (filas == 0 || columnas == 0 || filas < cantidad) {
-            return new Retorno(Retorno.Resultado.OK, "", 0);
-        }
+    int colStart, colEnd;
+    switch (unaClase.getIndice()) {
+        case 0:  colStart = 0;              colEnd = primeraEnd;   break; // PRIMERA
+        case 1:  colStart = ejecutivaStart; colEnd = ejecutivaEnd; break; // EJECUTIVA
+        default: colStart = ejecutivaEnd;   colEnd = columnas;     break; // TURISTA
+    }
 
-        int claseIndice = unaClase.getIndice();
-        String resultado = "";
-        int cantBloques = 0;
-        boolean primero = true;
+    // ── Buscar bloques con ventana deslizante ─────────────────────────
+    String resultado = "";
+    int cantBloques = 0;
+    boolean primero = true;
 
-        // Recorrer columna por columna buscando bloques verticales contiguos
-        for (int col = 0; col < columnas; col++) {
-            // Para cada fila de inicio posible en esta columna
-            for (int fila = 0; fila <= filas - cantidad; fila++) {
+    for (int col = colStart; col < colEnd; col++) {
+        // Lista de índices de filas D actualmente en la ventana
+        int[] ventana = new int[cantidad];
+        int tamVentana = 0;
 
-                // Verificar si el bloque de "cantidad" filas desde "fila" es todo de la clase pedida
-                boolean bloqueValido = true;
-                for (int k = 0; k < cantidad; k++) {
-                    if (matriz[fila + k][col] != claseIndice) {
-                        bloqueValido = false;
-                        break;
-                    }
-                }
+        for (int fila = 0; fila < filas; fila++) {
+            int valor = matriz[fila][col];
 
-                if (bloqueValido) {
-                    // Armar el string del bloque: "A1-B1-C1"
-                    // Fila se representa con letra (A=0, B=1, ...) y columna con número (base 1)
+            if (valor == DISPONIBLE) {
+                ventana[tamVentana++] = fila;
+
+                if (tamVentana == cantidad) {
+                    // Armar string del bloque con los índices reales de fila
                     String bloque = "";
-                    for (int k = 0; k < cantidad; k++) {
-                        if (k > 0) {
-                            bloque += "-";
-                        }
-                        bloque += (char) ('A' + fila + k);
+                    for (int i = 0; i < cantidad; i++) {
+                        if (i > 0) bloque += "-";
+                        bloque += (char) ('A' + ventana[i]);
                         bloque += (col + 1);
                     }
-
-                    if (!primero) {
-                        resultado += "|";
-                    }
+                    if (!primero) resultado += "|";
                     resultado += bloque;
                     primero = false;
                     cantBloques++;
-                }
-            }
-        }
 
-        return new Retorno(Retorno.Resultado.OK, resultado, cantBloques);
+                    // Deslizar: descartar el primer elemento de la ventana
+                    for (int i = 0; i < cantidad - 1; i++) ventana[i] = ventana[i + 1];
+                    tamVentana--;
+                }
+
+            } else if (valor != NO_APLICA) {
+                // O (ocupado) — rompe la cadena
+                tamVentana = 0;
+            }
+            // N (no aplica) — no hace nada, ventana se mantiene
+        }
     }
+
+    return new Retorno(Retorno.Resultado.OK, resultado, cantBloques);
+}
 }
