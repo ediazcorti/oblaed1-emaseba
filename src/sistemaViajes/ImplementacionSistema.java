@@ -2,7 +2,6 @@
 package sistemaViajes;
 
 // Agregar aquí nombres y números de estudiante de los integrantes del equipo
-
 import dominio.Clase;
 import dominio.Categoria;
 import dominio.Estado;
@@ -23,7 +22,6 @@ public class ImplementacionSistema implements Sistema {
     // ----------------------------------------------------------------
     // Helpers privados
     // ----------------------------------------------------------------
-
     private boolean esVacioONull(String s) {
         return s == null || s.trim().isEmpty();
     }
@@ -35,8 +33,6 @@ public class ImplementacionSistema implements Sistema {
     // ================================================================
     // Op 01 - Inicializar Sistema
     // ================================================================
-
-
     @SuppressWarnings("unchecked")
     @Override
     public Retorno inicializarSistema() {
@@ -53,7 +49,6 @@ public class ImplementacionSistema implements Sistema {
     // ================================================================
     // Op 02 - Registrar Pasajero
     // ================================================================
-
     @Override
     public Retorno registrarPasajero(String cedula, String nombre, int edad, Categoria categoria) {
         // ERROR_1: algún parámetro vacío, null, edad negativa o categoria null
@@ -64,12 +59,12 @@ public class ImplementacionSistema implements Sistema {
         if (!esFormatoCedulaValido(cedula)) {
             return Retorno.error2();
         }
-        
+
         // ERROR_3: Si la edad es menor a 0
-        if (edad < 0 ) {
+        if (edad < 0) {
             return Retorno.error3();
         }
-        
+
         // ERROR_4: ya existe un pasajero con esa cédula
         Pasajero pasajeroAux = new Pasajero(cedula, null, 0, null);
         if (pasajeros.buscar(pasajeroAux) != null) {
@@ -85,7 +80,6 @@ public class ImplementacionSistema implements Sistema {
     // ================================================================
     // Op 03 - Buscar Pasajero
     // ================================================================
-
     @Override
     public Retorno buscarPasajero(String cedula) {
         // ERROR_1: cédula vacía, null o formato inválido
@@ -104,7 +98,6 @@ public class ImplementacionSistema implements Sistema {
     // ================================================================
     // Op 04 - Listar Pasajeros Ascendente
     // ================================================================
-
     @Override
     public Retorno listarPasajerosAscendente() {
         // No hay errores posibles — retorna lista vacía si no hay pasajeros
@@ -114,7 +107,6 @@ public class ImplementacionSistema implements Sistema {
     // ================================================================
     // Op 05 - Listar Pasajeros Descendente
     // ================================================================
-
     @Override
     public Retorno listarPasajerosDescendente() {
         // No hay errores posibles — retorna lista vacía si no hay pasajeros
@@ -124,14 +116,13 @@ public class ImplementacionSistema implements Sistema {
     // ================================================================
     // Op 06 - Listar Pasajeros por Categoría
     // ================================================================
-
     @Override
     public Retorno listarPasajerosPorCategoría(Categoria unaCategoria) {
-    // Si unaCategoria es null retornamos error (Esto no viene en los requerimientos 
-    // pero el profe nos dijo por teams que lo podiamos agregar si queremos)    
+        // Si unaCategoria es null retornamos error (Esto no viene en los requerimientos 
+        // pero el profe nos dijo por teams que lo podiamos agregar si queremos)    
         if (unaCategoria == null) {
-        return Retorno.error1();
-    }
+            return Retorno.error1();
+        }
         // Acceso directo a la lista de esa categoría — O(k)
         return Retorno.ok(porCategoria[unaCategoria.getIndice()].listar());
     }
@@ -139,7 +130,6 @@ public class ImplementacionSistema implements Sistema {
     // ================================================================
     // Op 07 - Registrar Aeropuerto
     // ================================================================
-
     @Override
     public Retorno registrarAeropuerto(String codigo, String nombre) {
         // ERROR_1: parámetros vacíos o null
@@ -160,7 +150,6 @@ public class ImplementacionSistema implements Sistema {
     // ================================================================
     // Op 08 - Obtener Aeropuerto
     // ================================================================
-
     @Override
     public Retorno obtenerAeropuerto(String codigo) {
         // ERROR_1: código vacío o null
@@ -182,7 +171,6 @@ public class ImplementacionSistema implements Sistema {
     // ================================================================
     // Op 09 - Registrar Vuelo
     // ================================================================
-
     @Override
     public Retorno registrarVuelo(String codigoAeropuertoOrigen, String codigoAeropuertoDestino,
             String codigoDeVuelo, int capacidad, int costoEnDolares) {
@@ -195,7 +183,7 @@ public class ImplementacionSistema implements Sistema {
                 || esVacioONull(codigoDeVuelo)) {
             return Retorno.error2();
         }
-        
+
         // ERROR_3: aeropuerto origen no existe
         Aeropuerto aeropuertoAux = new Aeropuerto(codigoAeropuertoOrigen, null);
         Aeropuerto origen = aeropuertos.buscar(aeropuertoAux);
@@ -220,7 +208,6 @@ public class ImplementacionSistema implements Sistema {
     // ================================================================
     // Op 10 - Obtener Información de Vuelo
     // ================================================================
-
     @Override
     public Retorno obtenerInformacionDeVuelo(String codigoDeVuelo) {
         // ERROR_1: código vacío o null
@@ -239,7 +226,6 @@ public class ImplementacionSistema implements Sistema {
     // ================================================================
     // Op 11 - Abrir Vuelo
     // ================================================================
-
     @Override
     public Retorno abrirVuelo(String codigoDeVuelo) {
         // ERROR_1: código vacío o null
@@ -263,7 +249,6 @@ public class ImplementacionSistema implements Sistema {
     // ================================================================
     // Op 12 - Cerrar Vuelo
     // ================================================================
-
     @Override
     public Retorno cerrarVuelo(String codigoDeVuelo) {
         // ERROR_1: código vacío o null
@@ -293,40 +278,39 @@ public class ImplementacionSistema implements Sistema {
     // ================================================================
     // Op 13 - Realizar Reserva
     // ================================================================
-
     @Override
     public Retorno realizarReserva(String codigoDeVuelo, String cedula) {
         // ERROR_1: parámetros vacíos o null
         if (esVacioONull(codigoDeVuelo) || esVacioONull(cedula)) {
             return Retorno.error1();
         }
-        
+
         // ERROR_2: La cedula no tiene el formato Correcto
-        if(!esFormatoCedulaValido(cedula)){
+        if (!esFormatoCedulaValido(cedula)) {
             return Retorno.error2();
-        }       
-        
+        }
+
         // ERROR_3: vuelo no existe
         Vuelo vueloAux = new Vuelo(codigoDeVuelo, null, null, 0, 0);
         Vuelo vuelo = vuelos.buscar(vueloAux);
         if (vuelo == null) {
             return Retorno.error3();
         }
-        
+
         // ERROR_5: vuelo no está en estado PROGRAMADO o ABIERTO
         // Ejecutamos esto primero para que el sistema no busque un pasajero innecesariamente 
         // antes de saber el estado del vuelo
         if (vuelo.getEstado() != Estado.PROGRAMADO && vuelo.getEstado() != Estado.ABIERTO) {
             return Retorno.error5();
-        }  
-       
+        }
+
         // ERROR_4: pasajero no existe en el sistema
         Pasajero pasajeroAux = new Pasajero(cedula, null, 0, null);
         Pasajero pasajero = pasajeros.buscar(pasajeroAux);
         if (pasajero == null) {
             return Retorno.error4();
         }
-      
+
         // ERROR_6: el pasajero ya tiene una reserva en ese vuelo
         Reserva reservaAux = new Reserva(pasajeroAux);
         if (vuelo.buscarReserva(reservaAux) != null) {
@@ -343,42 +327,39 @@ public class ImplementacionSistema implements Sistema {
     // ================================================================
     // Op 14 - Realizar Check-In
     // ================================================================
-
     @Override
     public Retorno realizarCheckIn(String codigoDeVuelo, String cedula) {
         // ERROR_1: parámetros vacíos o null
         if (esVacioONull(codigoDeVuelo) || esVacioONull(cedula)) {
             return Retorno.error1();
         }
-        
+
         // ERROR_2: La cedula no tiene el formato Correcto
-        if(!esFormatoCedulaValido(cedula)){
+        if (!esFormatoCedulaValido(cedula)) {
             return Retorno.error2();
         }
-        
+
         // ERROR_3: vuelo no existe
         Vuelo vueloAux = new Vuelo(codigoDeVuelo, null, null, 0, 0);
         Vuelo vuelo = vuelos.buscar(vueloAux);
         if (vuelo == null) {
             return Retorno.error3();
         }
-        
-         // ERROR_4: pasajero no existe en el sistema
+
+        // ERROR_4: pasajero no existe en el sistema
         Pasajero pasajeroAux = new Pasajero(cedula, null, 0, null);
         Pasajero pasajero = pasajeros.buscar(pasajeroAux);
         if (pasajero == null) {
             return Retorno.error4();
         }
-        
+
         // ERROR_5: el vuelo no está en estado ABIERTO
         // Ejecutamos esto primero para que el sistema no busque un pasajero innecesariamente 
         // antes de saber el estado del vuelo
         if (vuelo.getEstado() != Estado.ABIERTO) {
             return Retorno.error5();
         }
-        
-       
-          
+
         // ERROR_6: el pasajero no tiene reserva en ese vuelo
         Reserva reservaAux = new Reserva(pasajeroAux);
         Reserva reserva = vuelo.buscarReserva(reservaAux);
@@ -400,7 +381,6 @@ public class ImplementacionSistema implements Sistema {
     // ================================================================
     // Op 15 - Embarque y Despegue de Vuelo
     // ================================================================
-
     @Override
     public Retorno embarqueYDespegueDeVuelo(String codigoAeropuerto) {
         // ERROR_1: código vacío o null
@@ -429,89 +409,119 @@ public class ImplementacionSistema implements Sistema {
     // ================================================================
     // Op 16 - Consulta Disponibilidad
     // ================================================================
+    
+    @Override
+    public Retorno consultaDisponibilidad(int[][] matriz, int cantidad, Clase unaClase) {
 
-@Override
-public Retorno consultaDisponibilidad(int[][] matriz, int cantidad, Clase unaClase) {
-    if (matriz == null || cantidad <= 0 || unaClase == null) {
-        return Retorno.error1();
-    }
-
-    int filas = matriz.length;
-    int columnas = (filas > 0) ? matriz[0].length : 0;
-    if (filas == 0 || columnas == 0) {
-        return new Retorno(Retorno.Resultado.OK, "", 0);
-    }
-
-    final int DISPONIBLE = 0; // D
-    final int NO_APLICA   = 2; // N — skip, no rompe la cadena
-    // O (=1) rompe la cadena implícitamente (no es DISPONIBLE ni NO_APLICA)
-
-    // ── Detectar zona de PRIMERA: columnas que tienen algún N ──────────
-    int primeraEnd = 0;
-    for (int col = 0; col < columnas; col++) {
-        boolean tieneN = false;
-        for (int fil = 0; fil < filas; fil++) {
-            if (matriz[fil][col] == NO_APLICA) { tieneN = true; break; }
+        // ERROR_1 — parámetros inválidos
+        if (matriz == null || cantidad <= 0 || unaClase == null) {
+            return Retorno.error1();
         }
-        if (tieneN) primeraEnd = col + 1;
-        else        break; // zona PRIMERA es contigua desde col 0
-    }
 
-    // ── Límites de zona para la clase pedida ──────────────────────────
-    // Avión de la consigna: 3 cols PRIMERA, 4 cols EJECUTIVA, resto TURISTA
-    int ejecutivaCount = 4; // fijo para este avión
-    int ejecutivaStart = primeraEnd;
-    int ejecutivaEnd   = Math.min(ejecutivaStart + ejecutivaCount, columnas);
+        int filas = matriz.length;
+        int columnas = (filas > 0) ? matriz[0].length : 0;
 
-    int colStart, colEnd;
-    switch (unaClase.getIndice()) {
-        case 0:  colStart = 0;              colEnd = primeraEnd;   break; // PRIMERA
-        case 1:  colStart = ejecutivaStart; colEnd = ejecutivaEnd; break; // EJECUTIVA
-        default: colStart = ejecutivaEnd;   colEnd = columnas;     break; // TURISTA
-    }
 
-    // ── Buscar bloques con ventana deslizante ─────────────────────────
-    String resultado = "";
-    int cantBloques = 0;
-    boolean primero = true;
+        final int DISPONIBLE = 0; // D del profe — asiento libre, cuenta para el bloque
+        final int NO_APLICA = 2; // N del profe — no existe el asiento, se ignora (transparente)
+        // 1 (O del profe) = ocupado, rompe el bloque
 
-    for (int col = colStart; col < colEnd; col++) {
-        // Lista de índices de filas D actualmente en la ventana
-        int[] ventana = new int[cantidad];
-        int tamVentana = 0;
+        // ── PARTE 1: detectar fin de zona PRIMERA ────────────────────────────────
+        // Las columnas PRIMERA son las que tienen algún valor NO_APLICA (filas sin asiento).
+        // Escaneamos de izquierda a derecha; en cuanto encontramos una columna sin N, la zona
+        // PRIMERA terminó ahí.
+        int primeraEnd = 0;
+        int colScan = 0;
+        boolean sigueN = true;
 
-        for (int fila = 0; fila < filas; fila++) {
-            int valor = matriz[fila][col];
+        while (colScan < columnas && sigueN) {
+            boolean hayNenEstaCol = false;
+            int filScan = 0;
 
-            if (valor == DISPONIBLE) {
-                ventana[tamVentana++] = fila;
-
-                if (tamVentana == cantidad) {
-                    // Armar string del bloque con los índices reales de fila
-                    String bloque = "";
-                    for (int i = 0; i < cantidad; i++) {
-                        if (i > 0) bloque += "-";
-                        bloque += (char) ('A' + ventana[i]);
-                        bloque += (col + 1);
-                    }
-                    if (!primero) resultado += "|";
-                    resultado += bloque;
-                    primero = false;
-                    cantBloques++;
-
-                    // Deslizar: descartar el primer elemento de la ventana
-                    for (int i = 0; i < cantidad - 1; i++) ventana[i] = ventana[i + 1];
-                    tamVentana--;
+            while (filScan < filas && !hayNenEstaCol) {
+                if (matriz[filScan][colScan] == NO_APLICA) {
+                    hayNenEstaCol = true;
                 }
-
-            } else if (valor != NO_APLICA) {
-                // O (ocupado) — rompe la cadena
-                tamVentana = 0;
+                filScan++;
             }
-            // N (no aplica) — no hace nada, ventana se mantiene
-        }
-    }
 
-    return new Retorno(Retorno.Resultado.OK, resultado, cantBloques);
-}
+            if (hayNenEstaCol) {
+                primeraEnd = colScan + 1; // esta columna pertenece a PRIMERA
+            } else {
+                sigueN = false;           // columna sin N → terminó zona PRIMERA
+            }
+            colScan++;
+        }
+
+        // Zona EJECUTIVA = las 4 columnas inmediatas tras PRIMERA (fijo para este avión)
+        int ejecutivaStart = primeraEnd;
+        int ejecutivaEnd = Math.min(ejecutivaStart + 4, columnas);
+
+        // ── PARTE 2: determinar rango de columnas para la clase pedida ───────────
+        int colStart, colEnd;
+
+        if (unaClase.getIndice() == 0) {        // PRIMERA
+            colStart = 0;
+            colEnd = primeraEnd;
+        } else if (unaClase.getIndice() == 1) { // EJECUTIVA
+            colStart = ejecutivaStart;
+            colEnd = ejecutivaEnd;
+        } else {                                // TURISTA
+            colStart = ejecutivaEnd;
+            colEnd = columnas;
+        }
+
+        // ── PARTE 3: buscar bloques columna por columna ──────────────────────────
+        String resultado = "";
+        int cantBloques = 0;
+        boolean primero = true;
+
+        for (int c = colStart; c < colEnd; c++) {
+            for (int filaInicio = 0; filaInicio < filas; filaInicio++) {
+
+                // Solo intentamos armar un bloque si la fila de inicio tiene asiento DISPONIBLE
+                if (matriz[filaInicio][c] == DISPONIBLE) {
+
+                    int[] filasDelBloque = new int[cantidad]; // índices reales de filas D
+                    int contadorD = 0;
+                    int filaActual = filaInicio;
+                    boolean bloqueRoto = false;
+
+                    // Bajamos fila a fila recolectando D's y saltando N's.
+                    // Paramos si: se acabaron filas, completamos el bloque, o una O lo rompió.
+                    while (filaActual < filas && contadorD < cantidad && !bloqueRoto) {
+                        if (matriz[filaActual][c] == DISPONIBLE) {
+                            filasDelBloque[contadorD] = filaActual;
+                            contadorD++;
+                        } else if (matriz[filaActual][c] != NO_APLICA) {
+                            bloqueRoto = true; // es O (ocupado) → bloque inválido
+                        }
+                        // N (NO_APLICA) → no hacemos nada, simplemente pasamos
+                        filaActual++;
+                    }
+
+                    // Si llegamos a la cantidad exacta sin que una O lo cortara → bloque válido
+                    if (contadorD == cantidad) {
+                        // Construir el string "B8-C8-D8": letra de fila + número de columna
+                        String bloque = "";
+                        for (int k = 0; k < cantidad; k++) {
+                            if (k > 0) {
+                                bloque += "-";
+                            }
+                            bloque += (char) ('A' + filasDelBloque[k]); // 0→A, 1→B, ...
+                            bloque += (c + 1);                           // columna base-1
+                        }
+                        if (!primero) {
+                            resultado += "|";
+                        }
+                        resultado += bloque;
+                        primero = false;
+                        cantBloques++;
+                    }
+                }
+            }
+        }
+
+        return new Retorno(Retorno.Resultado.OK, resultado, cantBloques);
+    }
 }
